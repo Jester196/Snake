@@ -1,0 +1,37 @@
+const SnakeSkins = {
+    classic: {
+        head: {
+            color: '#4CAF50',
+            borderColor: '#2E7D32'
+        },
+        body: {
+            color: '#81C784',
+            borderColor: '#4CAF50'
+        }
+    },
+    neon: {
+        head: {
+            color: '#00ff00',
+            borderColor: '#39ff14'
+        },
+        body: {
+            color: '#39ff14',
+            borderColor: '#00ff00'
+        }
+    },
+    rainbow: {
+        head: {
+            color: '#ff0000',
+            borderColor: '#ff4444'
+        },
+        body: {
+            getColor: function(index) {
+                const colors = ['#ff0000', '#ff7f00', '#ffff00', '#00ff00', '#0000ff', '#4b0082', '#8f00ff'];
+                return {
+                    color: colors[index % colors.length],
+                    borderColor: colors[(index + 1) % colors.length]
+                };
+            }
+        }
+    }
+};

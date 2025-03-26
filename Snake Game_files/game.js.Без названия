@@ -1,0 +1,210 @@
+class SnakeGame {
+    constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.gridSize = 20;
+        this.tileCount = 20;
+        this.snake = [];
+        this.food = { x: 0, y: 0 };
+        this.direction = { x: 0, y: 0 };
+        this.score = 0;
+        this.gameLoop = null;
+        this.currentSkin = 'classic';
+        this.gameSpeed = 150;
+        this.isGameOver = false;
+        this.audio = new GameAudio();
+
+        // Initialize snake
+        this.snake.push({ x: 10, y: 10 });
+        this.generateFood();
+        this.setupControls();
+    }
+
+    setupControls() {
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowUp':
+                    if (this.direction.y !== 1) {
+                        this.direction = { x: 0, y: -1 };
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (this.direction.y !== -1) {
+                        this.direction = { x: 0, y: 1 };
+                    }
+                    break;
+                case 'ArrowLeft':
+                    if (this.direction.x !== 1) {
+                        this.direction = { x: -1, y: 0 };
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (this.direction.x !== -1) {
+                        this.direction = { x: 1, y: 0 };
+                    }
+                    break;
+            }
+        });
+    }
+
+    generateFood() {
+        this.food = {
+            x: Math.floor(Math.random() * this.tileCount),
+            y: Math.floor(Math.random() * this.tileCount)
+        };
+
+        // Ensure food doesn't spawn on snake
+        while (this.snake.some(segment => segment.x === this.food.x && segment.y === this.food.y)) {
+            this.food = {
+                x: Math.floor(Math.random() * this.tileCount),
+                y: Math.floor(Math.random() * this.tileCount)
+            };
+        }
+    }
+
+    update() {
+        if (this.isGameOver) return;
+
+        // Move snake
+        const newHead = {
+            x: this.snake[0].x + this.direction.x,
+            y: this.snake[0].y + this.direction.y
+        };
+
+        // Check collision with walls
+        if (newHead.x < 0 || newHead.x >= this.tileCount || 
+            newHead.y < 0 || newHead.y >= this.tileCount) {
+            this.gameOver();
+            return;
+        }
+
+        // Check collision with self
+        if (this.snake.some(segment => segment.x === newHead.x && segment.y === newHead.y)) {
+            this.gameOver();
+            return;
+        }
+
+        // Add new head
+        this.snake.unshift(newHead);
+
+        // Check if food is eaten
+        if (newHead.x === this.food.x && newHead.y === this.food.y) {
+            this.score += 10;
+            document.getElementById('score').textContent = this.score;
+            this.generateFood();
+            this.audio.playFoodCollect();
+            // Increase speed
+            if (this.gameSpeed > 50) {
+                this.gameSpeed -= 5;
+                clearInterval(this.gameLoop);
+                this.gameLoop = setInterval(() => this.update(), this.gameSpeed);
+            }
+        } else {
+            this.snake.pop();
+        }
+
+        this.draw();
+    }
+
+    draw() {
+        // Clear canvas with dark background
+        this.ctx.fillStyle = 'var(--bs-dark)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Draw snake
+        this.snake.forEach((segment, index) => {
+            const skin = SnakeSkins[this.currentSkin];
+            let segmentStyle;
+
+            if (index === 0) {
+                segmentStyle = skin.head;
+            } else if (skin.body.getColor) {
+                segmentStyle = skin.body.getColor(index);
+            } else {
+                segmentStyle = skin.body;
+            }
+
+            // Draw snake segment with a slight offset for border visibility
+            this.ctx.fillStyle = segmentStyle.color;
+            this.ctx.strokeStyle = segmentStyle.borderColor;
+            this.ctx.fillRect(
+                segment.x * this.gridSize + 1,
+                segment.y * this.gridSize + 1,
+                this.gridSize - 2,
+                this.gridSize - 2
+            );
+            this.ctx.strokeRect(
+                segment.x * this.gridSize + 1,
+                segment.y * this.gridSize + 1,
+                this.gridSize - 2,
+                this.gridSize - 2
+            );
+        });
+
+        // Draw food (apple)
+        this.ctx.fillStyle = '#ff4444';
+        this.ctx.strokeStyle = '#ff0000';
+
+        // Draw apple shape
+        const centerX = this.food.x * this.gridSize + this.gridSize/2;
+        const centerY = this.food.y * this.gridSize + this.gridSize/2;
+        const radius = (this.gridSize/2) - 2;
+
+        this.ctx.beginPath();
+        this.ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.stroke();
+
+        // Add apple shine
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.beginPath();
+        this.ctx.arc(
+            centerX - radius/3,
+            centerY - radius/3,
+            radius/4,
+            0,
+            Math.PI * 2
+        );
+        this.ctx.fill();
+    }
+
+    start() {
+        // Clear any existing game loop first
+        if (this.gameLoop) {
+            clearInterval(this.gameLoop);
+        }
+
+        this.isGameOver = false;
+        this.score = 0;
+        this.snake = [{ x: 10, y: 10 }];
+        this.direction = { x: 1, y: 0 }; // Start moving right
+        this.gameSpeed = 150;
+
+        // Reset UI elements
+        document.getElementById('score').textContent = '0';
+        document.getElementById('gameOver').classList.add('d-none');
+        document.getElementById('menu').classList.add('d-none');
+
+        // Play start sound
+        this.audio.playGameStart();
+
+        // Generate new food and start game loop
+        this.generateFood();
+        this.draw(); // Initial draw
+        this.gameLoop = setInterval(() => this.update(), this.gameSpeed);
+    }
+
+    gameOver() {
+        this.isGameOver = true;
+        clearInterval(this.gameLoop);
+        this.audio.playGameOver();
+        document.getElementById('finalScore').textContent = this.score;
+        document.getElementById('gameOver').classList.remove('d-none');
+    }
+
+    setSkin(skinName) {
+        if (SnakeSkins[skinName]) {
+            this.currentSkin = skinName;
+        }
+    }
+}

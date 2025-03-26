@@ -1,0 +1,28 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const game = new SnakeGame('gameCanvas');
+
+    // Skin selection
+    document.querySelectorAll('.skin-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.skin-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            game.setSkin(e.target.dataset.skin);
+        });
+    });
+
+    // Start game button
+    document.getElementById('startGame').addEventListener('click', () => {
+        document.getElementById('menu').classList.add('d-none');
+        game.direction = { x: 1, y: 0 }; // Set initial direction
+        game.start();
+    });
+
+    // Restart game button
+    document.getElementById('restartGame').addEventListener('click', () => {
+        document.getElementById('gameOver').classList.add('d-none');
+        document.getElementById('menu').classList.remove('d-none');
+    });
+
+    // Set default skin
+    document.querySelector('[data-skin="classic"]').classList.add('active');
+});

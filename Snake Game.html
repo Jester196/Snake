@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!-- saved from url=(0077)https://d3d673d4-7188-4a69-9186-6af32110078f-00-t7vzu612uieg.worf.replit.dev/ -->
+<html lang="en" data-bs-theme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="./Snake Game_files/bootstrap-agent-dark-theme.min.css">
+    <link rel="stylesheet" href="./Snake Game_files/style.css">
+    <script src="./Snake Game_files/Tone.js.Без названия"></script>
+</head>
+<body cz-shortcut-listen="true">
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h1 class="mb-4">Snake Game</h1>
+
+                <!-- Game Menu -->
+                <div id="menu" class="mb-4">
+                    <h3>Select Snake Skin</h3>
+                    <div class="btn-group mb-3" role="group">
+                        <button class="btn btn-secondary skin-btn active" data-skin="classic">Classic</button>
+                        <button class="btn btn-secondary skin-btn" data-skin="neon">Neon</button>
+                        <button class="btn btn-secondary skin-btn" data-skin="rainbow">Rainbow</button>
+                    </div>
+                    <br>
+                    <button id="startGame" class="btn btn-primary">Start Game</button>
+                </div>
+
+                <!-- Game Canvas -->
+                <canvas id="gameCanvas" width="400" height="400" class="border border-secondary"></canvas>
+
+                <!-- Score Display -->
+                <div id="scoreDisplay" class="mt-3">
+                    <h3>Score: <span id="score">0</span></h3>
+                </div>
+
+                <!-- Game Over Screen -->
+                <div id="gameOver" class="d-none">
+                    <h2>Game Over!</h2>
+                    <p>Final Score: <span id="finalScore">0</span></p>
+                    <button id="restartGame" class="btn btn-primary">Play Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./Snake Game_files/snake_skins.js.Без названия"></script>
+    <script src="./Snake Game_files/audio.js.Без названия"></script>
+    <script src="./Snake Game_files/game.js.Без названия"></script>
+    <script src="./Snake Game_files/menu.js.Без названия"></script>
+
+</body></html>

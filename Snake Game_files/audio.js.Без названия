@@ -1,0 +1,29 @@
+class GameAudio {
+    constructor() {
+        this.synth = new Tone.Synth().toDestination();
+        this.foodSound = new Tone.Synth({
+            oscillator: { type: "triangle" },
+            envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 }
+        }).toDestination();
+        
+        this.gameOverSound = new Tone.Synth({
+            oscillator: { type: "square" },
+            envelope: { attack: 0.01, decay: 0.3, sustain: 0.1, release: 0.1 }
+        }).toDestination();
+    }
+
+    playFoodCollect() {
+        this.foodSound.triggerAttackRelease("C5", "8n");
+    }
+
+    playGameOver() {
+        this.gameOverSound.triggerAttackRelease("A3", "4n");
+        setTimeout(() => this.gameOverSound.triggerAttackRelease("E3", "2n"), 150);
+    }
+
+    playGameStart() {
+        this.synth.triggerAttackRelease("C4", "8n");
+        setTimeout(() => this.synth.triggerAttackRelease("E4", "8n"), 100);
+        setTimeout(() => this.synth.triggerAttackRelease("G4", "8n"), 200);
+    }
+}

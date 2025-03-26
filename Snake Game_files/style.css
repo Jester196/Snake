@@ -1,0 +1,21 @@
+#gameCanvas {
+    background-color: var(--bs-dark);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.skin-btn.active {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+#gameOver {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--bs-dark);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
